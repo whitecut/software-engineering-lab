@@ -1,0 +1,71 @@
+@startuml
+' =====================================================================
+' 酒店预订系统 · UML 组件图
+' 软件工程 实验二   学号 241220081   姓名 刘子健
+' =====================================================================
+skinparam defaultFontName "Microsoft YaHei"
+skinparam defaultFontSize 13
+skinparam dpi 135
+skinparam shadowing false
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+skinparam componentBorderColor #4A6B8A
+skinparam componentBackgroundColor #F4F8FC
+skinparam packageBorderColor #A9B7C6
+skinparam noteBackgroundColor #FFFDF0
+skinparam noteBorderColor #B8A96A
+skinparam nodesep 35
+skinparam ranksep 60
+
+title UML 组件图：模块划分与模块间交互
+
+package "表现层（浏览器）" {
+  [客人端 H5 / PC] as CustUI
+  [酒店工作台] as HotelUI
+  [平台管理后台] as AdminUI
+}
+
+package "应用服务层（业务模块）" {
+  [访问控制模块] as Auth
+  [查询模块] as Search
+  [房态库存模块] as Inventory
+  [价格模块] as Pricing
+  [预订模块] as Booking
+  [接待与消费模块] as FrontDesk
+  [结算模块] as Billing
+  [平台治理模块] as Gov
+  [报表看板模块] as Report
+}
+
+CustUI ..> Search : 查询
+CustUI ..> Booking : 下单 / 改单 / 取消
+HotelUI ..> FrontDesk : 接待 / 消费 / 收款
+AdminUI ..> Gov : 审核 / 处罚 / 投诉
+AdminUI ..> Report : 报表 / 日志
+
+Auth <.. Booking
+Auth <.. FrontDesk
+Auth <.. Gov
+
+Search ..> Inventory : 剩余房量
+Search ..> Pricing : 当日生效价
+
+Booking ..> Inventory : 逐晚扣减 / 释放
+Booking ..> Pricing : 取价并锁定
+Booking ..> Billing : 生成总账
+Booking ..> Gov : 状态变更日志
+
+FrontDesk ..> Inventory : 分房 / 房态
+FrontDesk ..> Booking : 查单 / 推进状态
+FrontDesk ..> Billing : 消费入账 / 收款
+FrontDesk ..> Gov : 接待与收款日志
+
+Billing ..> Gov : 账单变更日志
+
+note bottom
+  各模块通过仓储层访问 MySQL；资质照片存对象存储（见设计说明）。
+  预订模块是交易主链路：扣库存、锁价、建账在同一事务内完成，任一步失败整单回滚。
+  所有写操作统一调用平台治理模块中的日志服务，日志只增不改不删。
+end note
+
+@enduml

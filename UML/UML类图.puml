@@ -1,0 +1,166 @@
+@startuml
+' =====================================================================
+' 酒店预订系统 · UML 类图
+' 软件工程 实验二   学号 241220081   姓名 刘子健
+' =====================================================================
+skinparam defaultFontName "Microsoft YaHei"
+skinparam defaultFontSize 13
+skinparam dpi 135
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam classBorderColor #4A6B8A
+skinparam classBackgroundColor #FFFFFF
+skinparam classHeaderBackgroundColor #E8EEF5
+skinparam noteBackgroundColor #FFFDF0
+skinparam noteBorderColor #B8A96A
+skinparam nodesep 25
+skinparam ranksep 45
+hide circle
+
+title UML 类图：酒店预订系统领域模型
+
+package "账号与权限模块" {
+  abstract class 账号 {
+    - 账号ID : String
+    - 手机号 : String
+    - 密码哈希 : String
+    - 角色 : 角色
+    + 登录() : 会话
+  }
+  class 客人账号 {
+    - 客人ID : String
+    - 姓名 : String
+    + 查看本人订单() : List
+  }
+  class 酒店账号 {
+    - 是否主账号 : boolean
+    + 开立子账号() : 酒店账号
+  }
+  class 平台管理员账号 {
+    + 审核入驻() : void
+    + 上下架() : void
+  }
+}
+
+package "酒店与资源模块" {
+  class 酒店 {
+    - 酒店ID : String
+    - 名称 : String
+    - 地址 : String
+    - 状态 : 酒店状态
+    + 提交申请() : void
+    + 对外展示() : 酒店卡片
+  }
+  class 房型 {
+    - 房型ID : String
+    - 名称 : String
+    - 含早份数 : int
+    - 房间数 : int
+    - 基础价 : Decimal
+    - 取消规则 : String
+    + 生效价(日期) : Decimal
+  }
+  class 房间 {
+    - 房间号 : String
+    - 状态 : 房间状态
+    + 变更状态(新状态) : void
+  }
+  class 每日库存 {
+    - 日期 : Date
+    - 可售数量 : int
+    - 已售数量 : int
+    - 版本号 : int
+    + 扣减(间数) : boolean
+    + 释放(间数) : void
+  }
+  class 价格规则 {
+    - 类型 : 价格类型
+    - 开始日期 : Date
+    - 结束日期 : Date
+    - 金额 : Decimal
+    + 命中(日期) : boolean
+  }
+  class 停售记录 {
+    - 范围 : 停售范围
+    - 开始日期 : Date
+    - 结束日期 : Date
+    - 原因 : String
+  }
+  class 附加商品 {
+    - 名称 : String
+    - 单价 : Decimal
+    - 库存 : int
+  }
+}
+
+package "预订与结算模块" {
+  class 订单 {
+    - 订单号 : String
+    - 状态 : 订单状态
+    - 入住日期 : Date
+    - 离店日期 : Date
+    - 间数 : int
+    - 入住人手机号 : String
+    - 幂等键 : String
+    - 改单次数 : int
+    + 创建() : 订单
+    + 修改() : void
+    + 取消(取消方) : void
+    + 办理入住(房间) : void
+    + 办理退房() : void
+  }
+  class 订单明细 {
+    - 间数 : int
+    - 单价快照 : Decimal
+    - 晚数 : int
+    - 金额 : Decimal
+  }
+  class 消费明细 {
+    - 类型 : 消费类型
+    - 数量 : int
+    - 单价快照 : Decimal
+  }
+  class 账单 {
+    - 应收合计 : Decimal
+    - 已收金额 : Decimal
+    - 未收金额 : Decimal
+    + 重算() : void
+    + 收款(金额) : void
+  }
+  class 收款记录 {
+    - 方式 : 收款方式
+    - 金额 : Decimal
+    - 时间 : DateTime
+    - 收款账号 : String
+  }
+}
+
+' ---------------- 关系 ----------------
+账号 <|-- 客人账号
+账号 <|-- 酒店账号
+账号 <|-- 平台管理员账号
+酒店 "1" -- "1..*" 酒店账号 : 拥有
+酒店 "1" *-- "1..*" 房型 : 定义
+房型 "1" *-- "1..*" 房间 : 包含
+房型 "1" *-- "0..*" 每日库存 : 按日持有
+房型 "1" *-- "0..*" 价格规则 : 设置
+房型 "1" -- "0..*" 停售记录 : 按范围停售
+酒店 "1" *-- "0..*" 附加商品 : 维护
+客人账号 "1" -- "0..*" 订单 : 下单
+订单 "1" *-- "1..*" 订单明细 : 包含
+订单明细 "0..*" -- "1" 房型 : 引用
+订单 "1" *-- "0..*" 消费明细 : 挂账
+附加商品 "0..1" -- "0..*" 消费明细 : 购买
+订单 "1" -- "1" 账单 : 结算
+账单 "1" *-- "0..*" 收款记录 : 逐笔登记
+
+legend bottom
+  <b>关键约束</b>
+  • 每日库存唯一键（房型, 日期）；可售数 ≤ 房间数；条件更新 + 版本号，并发抢最后 1 间只有 1 单成功。
+  • 订单状态：待入住→已入住 / 已取消 / 未到店；已入住→已退房（仅老板可撤销回待入住）；已取消、未到店、已退房为终态。
+  • 改单 ≤ 2 次且整单原子；同一请求重复提交返回同一张订单。
+  • 账单：应收 = 房费 + 早餐费 + 在店消费 + 取消应扣；未收 = 应收 − 已收。
+end legend
+
+@enduml
