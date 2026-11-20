@@ -13,14 +13,20 @@ from .utils import fmt_date, money, today
 
 FONT = ("Microsoft YaHei", 10)
 FONT_BOLD = ("Microsoft YaHei", 10, "bold")
-FONT_TITLE = ("Microsoft YaHei", 16, "bold")
+FONT_TITLE = ("Microsoft YaHei", 17, "bold")
 FONT_CARD = ("Microsoft YaHei", 18, "bold")
-NAVY = "#0B2C4D"
-BLUE = "#0F6CBD"
-BG = "#F2F5F9"
+NAVY = "#6D4C5C"
+BLUE = "#F06292"
+BG = "#FFF7FA"
 WHITE = "#FFFFFF"
-GRAY = "#64748B"
-LINE = "#E3E9F2"
+GRAY = "#A17888"
+LINE = "#F8BBD0"
+SIDEBAR = "#FBE4EE"
+PINK = "#F06292"
+PINK_DEEP = "#D81B60"
+PINK_LIGHT = "#FCE4EC"
+LAVENDER = "#CE93D8"
+MINT = "#80CBC4"
 
 
 class FormDialog(tk.Toplevel):
@@ -106,10 +112,23 @@ class HotelGUI(tk.Tk):
         style = ttk.Style(self)
         style.theme_use("clam")
         style.configure(
-            "Treeview", font=FONT, rowheight=26, background=WHITE, fieldbackground=WHITE
+            "Treeview",
+            font=FONT,
+            rowheight=28,
+            background=WHITE,
+            fieldbackground=WHITE,
+            foreground=NAVY,
+            borderwidth=0,
         )
-        style.configure("Treeview.Heading", font=FONT_BOLD, background="#E8EEF5", foreground=NAVY)
-        style.configure("TCombobox", font=FONT)
+        style.configure(
+            "Treeview.Heading",
+            font=FONT_BOLD,
+            background=PINK_LIGHT,
+            foreground=PINK_DEEP,
+            relief="flat",
+        )
+        style.map("Treeview", background=[("selected", PINK)], foreground=[("selected", WHITE)])
+        style.configure("TCombobox", font=FONT, fieldbackground=WHITE)
         style.configure("TNotebook", background=BG, borderwidth=0)
         style.configure("TNotebook.Tab", font=FONT, padding=(14, 6))
 
@@ -121,34 +140,64 @@ class HotelGUI(tk.Tk):
             child.destroy()
 
     def show_login(self) -> None:
-        """Render the login screen."""
+        """Render the cute login screen."""
         self._clear()
         self.actor = None
-        left = tk.Frame(self, bg=NAVY, width=430)
+        left = tk.Canvas(self, width=440, highlightthickness=0, bg=PINK_LIGHT)
         left.pack(side="left", fill="y")
-        left.pack_propagate(False)
-        tk.Label(left, text="酒店云", bg=NAVY, fg=WHITE, font=("Microsoft YaHei", 30, "bold")).pack(
-            anchor="w", padx=40, pady=(120, 6)
+        self._gradient(left, 440, 900, "#FFD9E6", "#E9D5F5")
+        # 一只趴在右上角的小兔子
+        left.create_oval(330, 56, 352, 122, fill="#FFF7FA", outline=PINK, width=2)
+        left.create_oval(358, 56, 380, 122, fill="#FFF7FA", outline=PINK, width=2)
+        left.create_oval(318, 102, 395, 184, fill="#FFF7FA", outline=PINK, width=2)
+        left.create_oval(340, 130, 348, 138, fill=NAVY, outline="")
+        left.create_oval(365, 130, 373, 138, fill=NAVY, outline="")
+        left.create_oval(352, 146, 360, 153, fill=PINK_DEEP, outline="")
+        left.create_oval(328, 143, 342, 154, fill="#FFD1DC", outline="")
+        left.create_oval(370, 143, 384, 154, fill="#FFD1DC", outline="")
+        left.create_text(38, 78, text="❀", font=("Microsoft YaHei", 46), fill=PINK_DEEP, anchor="w")
+        left.create_text(
+            38, 138, text="酒店云", font=("Microsoft YaHei", 36, "bold"), fill=PINK_DEEP, anchor="w"
         )
-        tk.Label(
-            left, text="HOTEL CONSOLE", bg=NAVY, fg="#8FA6BE", font=("Microsoft YaHei", 10)
-        ).pack(anchor="w", padx=42)
-        tk.Label(
-            left,
-            text="跨城市、多酒店的公共预订平台\n查询 · 预订 · 接待 · 结算 · 治理",
-            bg=NAVY,
-            fg="#C7D6E6",
-            font=("Microsoft YaHei", 12),
+        left.create_text(
+            40, 196, text="HOTEL CONSOLE", font=("Microsoft YaHei", 10), fill="#B07A8E", anchor="w"
+        )
+        left.create_text(
+            40,
+            262,
+            text="今天也要元气满满哦～\n查一查、订一订，去想去的地方 ♡",
+            font=("Microsoft YaHei", 13),
+            fill=NAVY,
+            anchor="w",
             justify="left",
-        ).pack(anchor="w", padx=40, pady=(40, 0))
+        )
+        left.create_text(
+            40,
+            350,
+            text="♡    ✿    ♡    ✿    ♡",
+            font=("Microsoft YaHei", 18),
+            fill="#F48FB1",
+            anchor="w",
+        )
+        left.create_text(
+            40,
+            760,
+            text="酒店预订系统 · 软件工程实验三",
+            font=("Microsoft YaHei", 9),
+            fill="#B07A8E",
+            anchor="w",
+        )
+
         right = tk.Frame(self, bg=BG)
         right.pack(side="left", fill="both", expand=True)
+        shadow = tk.Frame(right, bg="#F3D9E4")
+        shadow.place(relx=0.5, rely=0.46, anchor="center", width=430, height=446)
         card = tk.Frame(
-            right, bg=WHITE, padx=36, pady=30, highlightbackground=LINE, highlightthickness=1
+            right, bg=WHITE, padx=36, pady=28, highlightbackground=LINE, highlightthickness=2
         )
-        card.place(relx=0.5, rely=0.46, anchor="center", width=420, height=430)
-        tk.Label(card, text="账号登录", bg=WHITE, fg=NAVY, font=FONT_TITLE).pack(anchor="w")
-        tk.Label(card, text="使用演示账号或酒店子账号登录", bg=WHITE, fg=GRAY, font=FONT).pack(
+        card.place(relx=0.5, rely=0.455, anchor="center", width=430, height=446)
+        tk.Label(card, text="欢迎回来～", bg=WHITE, fg=PINK_DEEP, font=FONT_TITLE).pack(anchor="w")
+        tk.Label(card, text="挑一个身份，开始今天的小旅行吧 ♡", bg=WHITE, fg=GRAY, font=FONT).pack(
             anchor="w", pady=(4, 18)
         )
         self.login_phone = tk.StringVar(value="13800000003")
@@ -164,40 +213,58 @@ class HotelGUI(tk.Tk):
         tk.Button(
             card,
             text="登 录",
-            bg=BLUE,
+            bg=PINK,
             fg=WHITE,
             relief="flat",
+            activebackground=PINK_DEEP,
+            activeforeground=WHITE,
             font=FONT_BOLD,
+            cursor="hand2",
             command=self._do_login,
-        ).pack(fill="x", ipady=6)
+        ).pack(fill="x", ipady=7)
         tk.Button(
             card,
-            text="注册客人账号",
+            text="还没有账号？注册一个吧",
             bg=WHITE,
-            fg=BLUE,
+            fg=PINK_DEEP,
             relief="flat",
             font=FONT,
+            cursor="hand2",
             command=self._register_dialog,
         ).pack(pady=(10, 0))
         demo = tk.Frame(card, bg=WHITE)
-        demo.pack(fill="x", pady=(18, 0))
+        demo.pack(fill="x", pady=(16, 0))
         for index, (label, phone, password) in enumerate(
             [
-                ("客人", "13800000003", "guest123"),
-                ("前台", "13800000002", "desk123"),
-                ("老板", "13800000001", "owner123"),
-                ("管理员", "13900000000", "admin123"),
+                ("客人 ♡", "13800000003", "guest123"),
+                ("前台 ✿", "13800000002", "desk123"),
+                ("老板 ☆", "13800000001", "owner123"),
+                ("管理员 ✦", "13900000000", "admin123"),
             ]
         ):
             tk.Button(
                 demo,
                 text=label,
-                bg="#EEF3FA",
+                bg="#FFF0F6",
                 fg=NAVY,
                 relief="flat",
-                width=7,
+                width=8,
+                activebackground=PINK_LIGHT,
+                cursor="hand2",
                 command=lambda p=phone, w=password: self._demo_login(p, w),
             ).grid(row=0, column=index, padx=2, pady=2)
+
+    @staticmethod
+    def _gradient(canvas: tk.Canvas, width: int, height: int, start: str, end: str) -> None:
+        """Paint a vertical pastel gradient on a canvas."""
+        start_rgb = tuple(int(start[i : i + 2], 16) for i in (1, 3, 5))
+        end_rgb = tuple(int(end[i : i + 2], 16) for i in (1, 3, 5))
+        for y in range(height):
+            ratio = y / max(1, height - 1)
+            color = "#" + "".join(
+                f"{int(start_rgb[i] + (end_rgb[i] - start_rgb[i]) * ratio):02x}" for i in range(3)
+            )
+            canvas.create_line(0, y, width, y, fill=color)
 
     def _demo_login(self, phone: str, password: str) -> None:
         self.login_phone.set(phone)
@@ -232,27 +299,35 @@ class HotelGUI(tk.Tk):
     def _build_shell(self) -> None:
         self._clear()
         self.nav_buttons = []
-        sidebar = tk.Frame(self, bg=NAVY, width=220)
+        sidebar = tk.Frame(self, bg=SIDEBAR, width=220)
         sidebar.pack(side="left", fill="y")
         sidebar.pack_propagate(False)
         tk.Label(
-            sidebar, text="酒店云", bg=NAVY, fg=WHITE, font=("Microsoft YaHei", 20, "bold")
+            sidebar, text="❀ 酒店云", bg=SIDEBAR, fg=PINK_DEEP, font=("Microsoft YaHei", 20, "bold")
         ).pack(anchor="w", padx=20, pady=(24, 0))
         tk.Label(
-            sidebar, text="HOTEL CONSOLE", bg=NAVY, fg="#8FA6BE", font=("Microsoft YaHei", 8)
+            sidebar, text="HOTEL CONSOLE", bg=SIDEBAR, fg="#B07A8E", font=("Microsoft YaHei", 8)
         ).pack(anchor="w", padx=22)
-        self.nav_frame = tk.Frame(sidebar, bg=NAVY)
+        self.nav_frame = tk.Frame(sidebar, bg=SIDEBAR)
         self.nav_frame.pack(fill="x", padx=10, pady=22)
         tk.Label(
             sidebar,
-            text=f"{self.actor['name']}\n{self._role_name()}",
-            bg=NAVY,
-            fg="#C7D6E6",
+            text=f"{self.actor['name']} ♡\n{self._role_name()}",
+            bg=SIDEBAR,
+            fg=NAVY,
             font=FONT,
             justify="left",
         ).pack(side="bottom", anchor="w", padx=20, pady=(0, 10))
         tk.Button(
-            sidebar, text="退出登录", bg=NAVY, fg="#8FA6BE", relief="flat", command=self.show_login
+            sidebar,
+            text="退出登录",
+            bg=SIDEBAR,
+            fg="#B07A8E",
+            relief="flat",
+            activebackground=PINK_LIGHT,
+            activeforeground=PINK_DEEP,
+            cursor="hand2",
+            command=self.show_login,
         ).pack(side="bottom", anchor="w", padx=16)
         main = tk.Frame(self, bg=BG)
         main.pack(side="left", fill="both", expand=True)
@@ -261,9 +336,9 @@ class HotelGUI(tk.Tk):
         top.pack_propagate(False)
         self.page_title = tk.Label(top, text="", bg=WHITE, fg=NAVY, font=FONT_BOLD)
         self.page_title.pack(side="left", padx=22)
-        tk.Label(top, text=fmt_date(today()), bg=WHITE, fg=GRAY, font=FONT).pack(
-            side="right", padx=22
-        )
+        tk.Label(
+            top, text=f"今天也要开心呀 ♡  {fmt_date(today())}", bg=WHITE, fg=GRAY, font=FONT
+        ).pack(side="right", padx=22)
         self.content = tk.Frame(main, bg=BG)
         self.content.pack(fill="both", expand=True, padx=18, pady=16)
         self.section_defs = self._sections()
@@ -271,14 +346,15 @@ class HotelGUI(tk.Tk):
             button = tk.Button(
                 self.nav_frame,
                 text=label,
-                bg=NAVY,
-                fg="#C7D6E6",
-                activebackground="#123B63",
-                activeforeground=WHITE,
+                bg=SIDEBAR,
+                fg=NAVY,
+                activebackground=PINK_LIGHT,
+                activeforeground=PINK_DEEP,
                 relief="flat",
                 anchor="w",
                 padx=14,
                 pady=8,
+                cursor="hand2",
                 font=FONT,
                 command=lambda i=index: self.show_section(i),
             )
@@ -303,7 +379,8 @@ class HotelGUI(tk.Tk):
         self.page_title.config(text=label)
         for i, button in enumerate(self.nav_buttons):
             button.configure(
-                bg="#123B63" if i == index else NAVY, fg=WHITE if i == index else "#C7D6E6"
+                bg=WHITE if i == index else SIDEBAR,
+                fg=PINK_DEEP if i == index else NAVY,
             )
         builder(self.content)
 
@@ -313,17 +390,17 @@ class HotelGUI(tk.Tk):
     def _section(self, parent, title: str, subtitle: str = "") -> tk.Frame:
         frame = tk.Frame(parent, bg=BG)
         frame.pack(fill="both", expand=True)
-        tk.Label(frame, text=title, bg=BG, fg=NAVY, font=FONT_TITLE).pack(anchor="w")
+        tk.Label(frame, text="✿ " + title, bg=BG, fg=PINK_DEEP, font=FONT_TITLE).pack(anchor="w")
         if subtitle:
             tk.Label(frame, text=subtitle, bg=BG, fg=GRAY, font=FONT).pack(anchor="w", pady=(2, 8))
         return frame
 
     def _card(self, parent, title: str, value: str, color: str = BLUE) -> tk.Frame:
-        card = tk.Frame(parent, bg=WHITE, highlightbackground=LINE, highlightthickness=1)
-        tk.Label(card, text=title, bg=WHITE, fg=GRAY, font=FONT).pack(
+        card = tk.Frame(parent, bg="#FFF0F6", highlightbackground=LINE, highlightthickness=2)
+        tk.Label(card, text=title, bg="#FFF0F6", fg="#A17888", font=FONT).pack(
             anchor="w", padx=14, pady=(10, 0)
         )
-        tk.Label(card, text=value, bg=WHITE, fg=color, font=FONT_CARD).pack(
+        tk.Label(card, text=value, bg="#FFF0F6", fg=color, font=FONT_CARD).pack(
             anchor="w", padx=14, pady=(2, 12)
         )
         return card
@@ -345,8 +422,10 @@ class HotelGUI(tk.Tk):
     def _fill(tree: ttk.Treeview, rows: list[list[str]]) -> None:
         for item in tree.get_children():
             tree.delete(item)
+        tree.tag_configure("odd", background="#FFF0F6")
         for index, row in enumerate(rows):
-            tree.insert("", "end", iid=str(index), values=row)
+            tags = ("odd",) if index % 2 else ()
+            tree.insert("", "end", iid=str(index), values=row, tags=tags)
 
     @staticmethod
     def _selected(tree: ttk.Treeview) -> int | None:

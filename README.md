@@ -62,14 +62,14 @@ python -m pytest -q          # 25 passed
 python -m pylint hotel_booking   # 10.00/10（.pylintrc 仅关闭设计类检查）
 ```
 
-源码规模：`hotel_booking` 包约 **4,807 行非空代码**（5,343 行物理行），测试约 353 行；
+源码规模：`hotel_booking` 包约 **4,884 行非空代码**（5,422 行物理行），测试约 353 行；
 不含任何 GUI 工具自动生成的代码（界面为手写 Tkinter）。
 
 ## 界面
 
-`python main.py --gui` 打开桌面客户端：左侧按角色显示导航，客人可查询/下单/看账单，
-前台可接待、看房态、登记消费与收款，老板可维护房型价格、停售、商品员工与报表，管理员可审核、
-处理投诉、审批调价。界面截图见 `docs/gui_login.png`、`docs/gui_guest_search.png`、
+`python main.py --gui` 打开桌面客户端：粉色渐变登录页、手绘小兔子、粉色表头与按角色切换的侧边栏。
+客人可查询/下单/看账单，前台可接待、看房态、登记消费与收款，老板可维护房型价格、停售、商品员工与报表，
+管理员可审核、处理投诉、审批调价。界面截图见 `docs/gui_login.png`、`docs/gui_guest_search.png`、
 `docs/gui_desk.png`、`docs/gui_owner.png`。
 
 ## 与实验二设计的关系
