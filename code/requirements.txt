@@ -1,0 +1,5 @@
+# Runtime: Python 3.12 standard library only (sqlite3, unittest/pytest for tests).
+# Development tools used by this project:
+pytest>=8
+pylint>=3
+black>=24
