@@ -1,0 +1,16 @@
+[MASTER]
+disable=
+    too-many-arguments,
+    too-many-positional-arguments,
+    too-many-locals,
+    too-many-branches,
+    too-many-statements,
+    too-many-return-statements,
+    too-few-public-methods,
+    too-many-instance-attributes,
+    too-many-public-methods,
+    duplicate-code,
+    fixme
+
+[FORMAT]
+max-line-length=100

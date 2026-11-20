@@ -1,0 +1,91 @@
+@startuml
+' =====================================================================
+' 酒店预订系统 · UML 用例图
+' 软件工程 实验二   学号 241220081   姓名 刘子健
+' =====================================================================
+skinparam defaultFontName "Microsoft YaHei"
+skinparam defaultFontSize 13
+skinparam dpi 135
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam usecaseBorderColor #4A6B8A
+skinparam usecaseBackgroundColor #FFFFFF
+skinparam packageBorderColor #A9B7C6
+skinparam noteBackgroundColor #FFFDF0
+skinparam noteBorderColor #B8A96A
+
+title UML 用例图：酒店预订平台
+
+left to right direction
+
+actor "客人" as Customer
+actor "酒店前台" as FD
+actor "酒店老板" as Boss
+actor "平台管理员" as Admin
+
+rectangle "酒店预订平台" {
+  package "查询与预订" {
+    usecase "查询酒店与房型" as UC_Search
+    usecase "预订下单" as UC_Book
+    usecase "修改 / 取消订单" as UC_Change
+    usecase "查看本人账单" as UC_Bill
+    usecase "提交投诉" as UC_Complain
+    usecase "校验收房量与计价" as UC_CheckAvail
+    usecase "计算取消应扣金额" as UC_CancelFee
+  }
+  package "接待与结算" {
+    usecase "分房并办理入住" as UC_CheckIn
+    usecase "办理退房" as UC_CheckOut
+    usecase "登记在店消费与收款" as UC_Consume
+    usecase "生成总账" as UC_Total
+  }
+  package "酒店维护" {
+    usecase "提交入驻 / 变更申请" as UC_Apply
+    usecase "维护房型与价格" as UC_RoomType
+    usecase "设置停售" as UC_StopSale
+    usecase "查看报表与日志" as UC_Report
+  }
+  package "平台治理" {
+    usecase "审核入驻 / 变更" as UC_Review
+    usecase "上下架 / 封禁处罚" as UC_Punish
+    usecase "处理投诉" as UC_Handle
+  }
+}
+
+Customer --> UC_Search
+Customer --> UC_Book
+Customer --> UC_Change
+Customer --> UC_Bill
+Customer --> UC_Complain
+
+FD --> UC_CheckIn
+FD --> UC_CheckOut
+FD --> UC_Consume
+FD --> UC_Book : 前台代订
+
+Boss --> UC_Apply
+Boss --> UC_RoomType
+Boss --> UC_StopSale
+Boss --> UC_Report
+
+Admin --> UC_Review
+Admin --> UC_Punish
+Admin --> UC_Handle
+
+UC_Book ..> UC_CheckAvail : <<include>>
+UC_Change ..> UC_CancelFee : <<include>>
+UC_CheckOut ..> UC_Total : <<include>>
+UC_Punish ..> UC_StopSale : <<include>>
+
+note bottom of UC_Book
+  下单立即生效、无需酒店确认；连续住宿任一天无房
+  则整单失败并提示具体日期（REQ-011）。
+end note
+
+note bottom of UC_Change
+  改单 ≤ 2 次且整单原子；取消按房型规则计费、
+  库存立即释放（REQ-013/014）。
+end note
+
+@enduml
