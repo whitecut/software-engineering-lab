@@ -1,12 +1,13 @@
 # 实验三：酒店预订系统（Python + SQLite 原型）
 
 软件工程实验三的实现部分。按照实验二的 UML 设计，用 Python 3.12 标准库实现了酒店预订的主要业务，
-提供命令行界面（CLI）与 SQLite 持久化，配套 25 个单元测试。
+提供 Tkinter 桌面界面（`--gui`）与命令行界面（CLI），SQLite 持久化，配套 25 个单元测试。
 
 ## 运行
 
 ```bash
 cd code
+python main.py --gui           # Tkinter 桌面界面
 python main.py                 # 交互式 CLI
 python main.py --demo          # 运行完整演示流程
 python main.py --db demo.db    # 指定数据库文件
@@ -61,15 +62,23 @@ python -m pytest -q          # 25 passed
 python -m pylint hotel_booking   # 10.00/10（.pylintrc 仅关闭设计类检查）
 ```
 
-源码规模：`hotel_booking` 包约 3,477 行非空代码（3,898 行物理行），测试约 353 行；
-不含任何 GUI 工具自动生成的代码。
+源码规模：`hotel_booking` 包约 **4,807 行非空代码**（5,343 行物理行），测试约 353 行；
+不含任何 GUI 工具自动生成的代码（界面为手写 Tkinter）。
+
+## 界面
+
+`python main.py --gui` 打开桌面客户端：左侧按角色显示导航，客人可查询/下单/看账单，
+前台可接待、看房态、登记消费与收款，老板可维护房型价格、停售、商品员工与报表，管理员可审核、
+处理投诉、审批调价。界面截图见 `docs/gui_login.png`、`docs/gui_guest_search.png`、
+`docs/gui_desk.png`、`docs/gui_owner.png`。
 
 ## 与实验二设计的关系
 
 - 类图 → `domain.py` + `db.py` 表结构 + `repository.py`。
-- 用例图 → `cli.py` 的菜单与各服务方法。
+- 用例图 → `gui.py` 的页面与 `cli.py` 的菜单，均对应各服务方法。
 - 组件图 → 按模块拆分的 `pricing/inventory/booking/billing/frontdesk/hotel_admin/governance/reports`。
 - 时序图 → `booking.create_order`/`modify_order`/`cancel_order` 中的事务与条件更新。
 
-为便于单机运行，实现与设计做了少量取舍：数据库使用 SQLite 而不是 MySQL；界面为 CLI（实验三不强制 GUI）；
-一个订单只包含一个房型，多房型订单留作扩展；平台调价审批按 7 天有效期实现，未做独立的审批页面。
+为便于单机运行，实现与设计做了少量取舍：数据库使用 SQLite 而不是 MySQL；桌面界面用 Tkinter 实现
+（未使用 Figma/亿图设计稿逐像素还原）；一个订单只包含一个房型，多房型订单留作扩展；平台调价审批
+按 7 天有效期实现，未做独立的审批页面。

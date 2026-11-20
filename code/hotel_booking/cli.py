@@ -490,6 +490,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="酒店预订系统 CLI")
     parser.add_argument("--db", default=None, help="SQLite 数据库路径")
     parser.add_argument("--demo", action="store_true", help="运行演示流程后退出")
+    parser.add_argument("--gui", action="store_true", help="启动 Tkinter 桌面界面")
     return parser
 
 
@@ -498,6 +499,10 @@ def main(argv: list[str] | None = None) -> None:
     args = build_parser().parse_args(argv)
     app = App(args.db)
     try:
+        if args.gui:
+            from .gui import HotelGUI
+            HotelGUI(app).run()
+            return
         if args.demo:
 
             run_demo(app)
