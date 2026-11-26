@@ -578,7 +578,7 @@ def build() -> None:
             ["远端仓库", "https://github.com/whitecut/software-engineering-lab.git"],
             ["分支", "lab3"],
             ["标签", "lab3-final"],
-            ["提交数", "11（截至报告生成）"],
+            ["提交数", "13（截至推送时）"],
             ["忽略规则", "__pycache__、*.db、build、dist、*.spec"],
         ],
         [4.0, 11.0],
@@ -605,6 +605,8 @@ def build() -> None:
             ["f9e9764", "清理临时截图"],
             ["def878a", "增加可填写实验报告模板与 PDF"],
             ["e28a13c", "增加报告模板 Markdown 版并校正规模表"],
+            ["8ef66c7", "生成最终实验报告与提交压缩包"],
+            ["729a7bf", "生成实验报告 Markdown 版并同步提交包"],
         ],
         [4.0, 11.0],
     )
@@ -618,7 +620,9 @@ def build() -> None:
     tpl.heading(doc, "6.3 远程管理", 2)
     tpl.body(
         doc,
-        "本地仓库已配置 origin 远端，分支 lab3 与标签 lab3-final 已创建。推送命令为：",
+        "本地仓库已配置 origin 远端，分支 lab3 与标签 lab3-final 已创建，并已推送到 GitHub。分支页面为"
+        "https://github.com/whitecut/software-engineering-lab/tree/lab3，标签页面为"
+        "https://github.com/whitecut/software-engineering-lab/tree/lab3-final。推送命令为：",
     )
     code_block(
         doc,
@@ -627,8 +631,7 @@ def build() -> None:
     )
     tpl.body(
         doc,
-        "由于实验环境不保存 GitHub 凭证，报告生成时的推送由本人后续在本地执行；推送完成后，"
-        "GitHub 仓库页面的 Branches 中可以看到 lab3，Tags 中可以看到 lab3-final，"
+        "推送完成后，GitHub 仓库页面的 Branches 中可以看到 lab3，Tags 中可以看到 lab3-final，"
         "提交记录与本地 git log 一致。仓库中的 code/ 目录包含全部源码、测试、UML 与文档，"
         "数据库文件、缓存、build/dist 不进入版本库，避免把运行产物当成源码提交。",
     )
